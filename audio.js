@@ -1,3 +1,5 @@
+var globalProcessor;
+
 ((window, undefined) => {
   navigator.getUserMedia =  navigator.getUserMedia       ||
                             navigator.webkitGetUserMedia ||
@@ -20,6 +22,7 @@
     source.connect(filter);
 
     const processor = context.createScriptProcessor();
+    globalProcessor = processor;
 
     processor.onaudioprocess = event => {
       const buffer = event.inputBuffer.getChannelData(0);
