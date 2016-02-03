@@ -12,20 +12,25 @@
     h.innerHTML = 'Thanks';
     h.setAttribute('style', 'opacity: 0;');
 
-    const audioContext = new AudioContext();
-    const audioStream = audioContext.createMediaStreamSource(stream);
-    const analyser = audioContext.createAnalyser();
-    const buffer = new Uint8Array(analyser.frequencyBinCount);
-    audioStream.connect(analyser);
+    const context = new AudioContext();
+    const source = context.createMediaStreamSource(stream);
 
-    function animate() {
-      analyser.getByteTimeDomainData(buffer);
-      const sum = buffer.reduce( (prev, curr) => prev + Math.abs(curr - 128) );
-      circle.setAttribute('r', sum / buffer.length);
+    const filter = context.createBiquadFilter();
+    filter.type = 'lowpass';
+    source.connect(filter);
 
-      requestAnimationFrame(animate);
+    const processor = context.createScriptProcessor();
+
+    processor.onaudioprocess = event => {
+      const buffer = event.inputBuffer.getChannelData(0);
+      console.log(buffer[0]);
+      const sum = buffer.reduce( (prev, curr) => prev + Math.abs(curr) );
+      circle.setAttribute('r', 1000 * sum / buffer.length);
     }
-    animate();
+
+    source.connect(processor);
+    processor.connect(context.destination);
+
   }, error => {
     h.innerHTML = 'You must allow your microphone.';
     console.log(error);
