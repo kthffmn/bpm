@@ -24,8 +24,9 @@
     processor.onaudioprocess = event => {
       const buffer = event.inputBuffer.getChannelData(0);
       const power = buffer.reduce((sum, x) => sum + x*x, 0);
-      // log to get loudness, sqrt to get radius:
-      circle.setAttribute('r', 50 * Math.sqrt(Math.log10(power + 1)));
+      const loudness = Math.log10(power + 1);
+      // use sqrt for radius so that area is proportional to loudness:
+      circle.setAttribute('r', 50 * Math.sqrt(loudness));
     }
     filter.connect(processor);
 
