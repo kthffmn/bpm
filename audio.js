@@ -15,13 +15,15 @@
     const audioContext = new AudioContext();
     const audioStream = audioContext.createMediaStreamSource(stream);
     const analyser = audioContext.createAnalyser();
-    const buffer = new Uint8Array(analyser.frequencyBinCount);
+    const buffer = new Float32Array(analyser.fftSize);
     audioStream.connect(analyser);
 
     function animate() {
-      analyser.getByteTimeDomainData(buffer);
-      const sum = buffer.reduce( (prev, curr) => prev + Math.abs(curr - 128) );
-      circle.setAttribute('r', sum / buffer.length);
+      analyser.getFloatTimeDomainData(buffer);
+      const power = buffer.reduce( (sum, x) => sum + x*x, 0 );
+      const loudness = Math.log10(power + 1);
+      // use sqrt for radius so that area is proportional to loudness:
+      circle.setAttribute('r', 50 * Math.sqrt(loudness));
 
       requestAnimationFrame(animate);
     }
