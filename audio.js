@@ -20,7 +20,7 @@
 
     function animate() {
       analyser.getFloatTimeDomainData(buffer);
-      const power = buffer.reduce( (sum, x) => sum + x*x, 0 );
+      const power = buffer.reduce((sum, x) => sum + x*x, 0);
       const loudness = Math.log10(power + 1);
       // use sqrt for radius so that area is proportional to loudness:
       circle.setAttribute('r', 50 * Math.sqrt(loudness));
