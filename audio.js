@@ -1,5 +1,3 @@
-var globalProcessor;
-
 ((window, undefined) => {
   navigator.getUserMedia =  navigator.getUserMedia       ||
                             navigator.webkitGetUserMedia ||
@@ -23,17 +21,17 @@ var globalProcessor;
 
     const processor = context.createScriptProcessor();
     globalProcessor = processor;
-
     processor.onaudioprocess = event => {
       const buffer = event.inputBuffer.getChannelData(0);
-      console.log(buffer[0]);
-      const sum = buffer.reduce( (prev, curr) => prev + Math.abs(curr) );
-      circle.setAttribute('r', 1000 * sum / buffer.length);
+      const power = buffer.reduce((sum, x) => sum + x*x, 0);
+      // log to get loudness, sqrt to get radius:
+      circle.setAttribute('r', 50 * Math.sqrt(Math.log10(power + 1)));
     }
+    filter.connect(processor);
 
-    source.connect(processor);
+    // must connect processor to output to 'pull' on it,
+    // but that's fine because output buffer defaults to zero:
     processor.connect(context.destination);
-
   }, error => {
     h.innerHTML = 'You must allow your microphone.';
     console.log(error);
