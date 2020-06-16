@@ -1,0 +1,17 @@
+{
+  "name": "bpm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:kthffmn/bpm.git",
+  "author": "Katie Hoffman <ktahoffman@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.5"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
+  }
+}
